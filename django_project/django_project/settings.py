@@ -19,7 +19,7 @@ SECRET_KEY = 'django-insecure-j+!-$2y*2)d1w#j*+v((72f66v#i0i!!%luygi2rhu@w+na8vi
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['webprogarepo.onrender.com']
 
 AUTH_USER_MODEL = 'tasks.CustomUser'
 
