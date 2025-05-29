@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:17.5
+    environment:
+      POSTGRES_DB: cat_base
+      POSTGRES_USER: semyon
+      POSTGRES_PASSWORD: WebsockChrist
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/django_project
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://semyon:WebsockChrist@db:5432/cat_base
+
+volumes:
+  postgres_data:

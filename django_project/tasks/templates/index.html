@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - Породы кошек</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Главная</a></li>
+                <li><a href="{% url 'breeds' %}">Породы</a></li>
+                <li><a href="{% url 'care' %}">Уход</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Выйти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Добро пожаловать на портал о породах кошек!</h1>
+        <p>Здесь вы найдете информацию о различных породах кошек, их особенностях и уходе за ними.</p>
+        <img src="{% static 'images/cat.jpg' %}" alt="Кошка">
+        <p><em>Кошки</em> — это удивительные создания, которые дарят нам радость и уют.</p>
+        <p><strong>Узнайте больше</strong> о том, как правильно заботиться о вашем питомце.</p>
+        <br />
+        <h2>Популярные породы:</h2>
+        <ul>
+            <li>Мейн-кун</li>
+            <li>Сиамская</li>
+            <li>Британская короткошерстная</li>
+        </ul>
+        {% if not user.is_authenticated %}
+        <section id="login-form" style="margin-top: 30px;">
+            <h3>Вход в аккаунт</h3>
+            <form id="loginForm" method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">Логин:</label>
+                    <input type="text" name="username" id="id_username" required>
+                    <div class="error-msg" id="login-username-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Пароль:</label>
+                    <input type="password" name="password" id="id_password" required>
+                    <div class="error-msg" id="login-password-error"></div>
+                </div>
+
+                <button type="submit">Войти</button>
+            </form>
+            <div id="login-status"></div>
+        </section>
+        {% endif %}
+        {% if not user.is_authenticated %}
+        <div id="registration-form">
+            <h2>Регистрация</h2>
+            <form id="registerForm" method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">Логин:</label>
+                    <input type="text" name="username" id="id_username" required>
+                    <div class="error-msg" id="username-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email">Email:</label>
+                    <input type="email" name="email" id="id_email" required>
+                    <div class="error-msg" id="email-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password1">Пароль:</label>
+                    <input type="password" name="password1" id="id_password1" required>
+                    <div class="error-msg" id="password1-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password2">Подтвердите пароль:</label>
+                    <input type="password" name="password2" id="id_password2" required>
+                    <div class="error-msg" id="password2-error"></div>
+                </div>
+
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <div id="registration-status"></div>
+        </div>
+        {% endif %}
+        <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const statusDiv = document.getElementById('registration-status');
+
+            document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+
+            const password1 = document.getElementById('id_password1').value;
+            const password2 = document.getElementById('id_password2').value;
+
+            if (password1 !== password2) {
+                document.getElementById('password2-error').textContent = "Пароли не совпадают";
+                return;
+            }
+
+            fetch("{% url 'register' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusDiv.textContent = "Регистрация успешна!";
+                    statusDiv.style.color = "green";
+                    form.reset();
+                } else {
+
+                    for (const [field, errors] of Object.entries(data.errors)) {
+                        const errorField = document.getElementById(`${field}-error`);
+                        if (errorField) {
+                            errorField.textContent = errors.join(' ');
+                            errorField.style.color = "red";
+                        }
+                    }
+                    statusDiv.textContent = "Пожалуйста, исправьте ошибки";
+                    statusDiv.style.color = "red";
+                }
+            });
+        });
+
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const form = e.target;
+                const formData = new FormData(form);
+                const statusDiv = document.getElementById('login-status');
+
+                // Очистка предыдущих ошибок
+                document.querySelectorAll('#login-form .error-msg').forEach(el => el.textContent = '');
+
+                fetch("{% url 'login' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        statusDiv.textContent = "Вход выполнен успешно!";
+                        statusDiv.style.color = "green";
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        // Отображение ошибок
+                        for (const [field, errors] of Object.entries(data.errors)) {
+                            const errorField = document.getElementById(`login-${field}-error`);
+                            if (errorField) {
+                                errorField.textContent = errors[0].message;
+                                errorField.style.color = "red";
+                            }
+                        }
+                        statusDiv.textContent = "Ошибка входа";
+                        statusDiv.style.color = "red";
+                    }
+                });
+            });
+        </script>
+        <footer>
+            <p>&copy; 2025 Портал о кошках</p>
+        </footer>
+    </main>
+</body>
+    <script src="scripts.js"></script>
+</html>

@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru" data-bs-theme="dark" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Press Any Button</title>
+    <link href="{% static "styles/styles.css" %}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column h-100">
+<section class="al mt-3">
+    <div class="container justify-content-center">
+        <div class="alert alert-dismissible alert-warning">
+            <h4 class="alert-heading">Приветствую вас!</h4>
+            <h5 class="mb-0">Сайт находится в процессе разработки.<br>
+                Следить за процессом разработки и повторять действия, можно в <a href="https://t.me/press_any_button">Telegram-канале
+                    "Код на салфетке"</a></h5>
+        </div>
+    </div>
+</section>
+<script src="{% static "js/tasks.bundle.js" %}"></script>
+</body>
+</html>

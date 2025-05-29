@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уход за кошками</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Главная</a></li>
+                <li><a href="{% url 'breeds' %}">Породы</a></li>
+                <li><a href="{% url 'care' %}">Уход</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Выйти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Уход за кошками</h1>
+        <p>Правильный уход за кошкой — залог ее здоровья и долголетия.</p>
+        <h2>Основные рекомендации:</h2>
+        <ol>
+            <li>Регулярное кормление</li>
+            <li>Гигиена</li>
+            <li>Ветеринарные осмотры</li>
+        </ol>
+        <video controls>
+            <source src="video/cat-care.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    <footer>
+        <p>&copy; 2025 Портал о кошках</p>
+    </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Породы кошек</title>
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .vote-container {
+            margin-top: 10px;
+        }
+        .vote-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .vote-btn.active {
+            background-color: #f0f0f0;
+        }
+        .like-btn.active {
+            color: green;
+        }
+        .dislike-btn.active {
+            color: red;
+        }
+        .vote-count {
+            margin-left: 5px;
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Главная</a></li>
+                <li><a href="{% url 'breeds' %}">Породы</a></li>
+                <li><a href="{% url 'care' %}">Уход</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Выйти</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Породы кошек</h1>
+        <p>На этой странице вы найдете информацию о различных породах кошек.</p>
+        <div class="breed-card" data-breed="Мейн-кун">
+            <h2>Мейн-кун</h2>
+            <img src="{% static 'images/cat1.jpg' %}" alt="Мейн-кун">
+            <p>Крупная порода кошек, известная своим дружелюбным характером.</p>
+            <div class="vote-container">
+                <button class="vote-btn like-btn" data-action="like">
+                    👍 <span class="vote-count like-count">0</span>
+                </button>
+                <button class="vote-btn dislike-btn" data-action="dislike">
+                    👎 <span class="vote-count dislike-count">0</span>
+                </button>
+            </div>
+        </div>
+        <div class="breed-card" data-breed="Сиамская">
+            <h2>Сиамская</h2>
+            <img src="{% static 'images/cat2.jpg' %}" alt="Сиамская">
+            <p>Элегантная кошка с ярким окрасом и голубыми глазами.</p>
+            <div class="vote-container">
+                <button class="vote-btn like-btn" data-action="like">
+                    👍 <span class="vote-count like-count">0</span>
+                </button>
+                <button class="vote-btn dislike-btn" data-action="dislike">
+                    👎 <span class="vote-count dislike-count">0</span>
+                </button>
+            </div>
+        </div>
+        <div class="breed-card" data-breed="Британская">
+            <h2>Британская</h2>
+            <img src="{% static 'images/cat3.jpg' %}" alt="Британская">
+            <p>Кошка с плюшевой шерстью и спокойным характером.</p>
+            <div class="vote-container">
+                <button class="vote-btn like-btn" data-action="like">
+                    👍 <span class="vote-count like-count">0</span>
+                </button>
+                <button class="vote-btn dislike-btn" data-action="dislike">
+                    👎 <span class="vote-count dislike-count">0</span>
+                </button>
+            </div>
+        </div>
+    <footer>
+        <p>&copy; 2025 Портал о кошках</p>
+    </footer>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загрузка текущих голосов при открытии страницы
+            document.querySelectorAll('.breed-card').forEach(card => {
+                const breedName = card.dataset.breed;
+                fetch(`/get_likes/?breed_name=${encodeURIComponent(breedName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        card.querySelector('.like-count').textContent = data.likes;
+                        card.querySelector('.dislike-count').textContent = data.dislikes;
+                    });
+            });
+
+            // Обработка кликов по кнопкам
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const card = this.closest('.breed-card');
+                    const breedName = card.dataset.breed;
+                    const action = this.dataset.action;
+
+                    fetch('/like_breed/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: `breed_name=${encodeURIComponent(breedName)}&action=${action}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Обновляем счетчики
+                            card.querySelector('.like-count').textContent = data.likes;
+                            card.querySelector('.dislike-count').textContent = data.dislikes;
+
+                            // Обновляем стили кнопок
+                            const likeBtn = card.querySelector('.like-btn');
+                            const dislikeBtn = card.querySelector('.dislike-btn');
+
+                            likeBtn.classList.remove('active');
+                            dislikeBtn.classList.remove('active');
+
+                            if (data.user_vote === 1) {
+                                likeBtn.classList.add('active');
+                            } else if (data.user_vote === -1) {
+                                dislikeBtn.classList.add('active');
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Функция для получения CSRF токена
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+        </script>
+</body>
+</html>
