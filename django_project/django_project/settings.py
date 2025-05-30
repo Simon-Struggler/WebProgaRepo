@@ -69,7 +69,7 @@ DATABASES = {
         'NAME': 'db_00ud',
         'USER': 'db_00ud_user',
         'PASSWORD': 'tL8Tuciz5JK0GVBXTDSCnkm9GTAyySs8',
-        'HOST': 'db',  # Имя сервиса в docker-compose.yml
+        'HOST': 'dpg-d0stgcbuibrs73apmmb0-a',  # Имя сервиса в docker-compose.yml
         'PORT': '5432',
     }
 }

@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:17.5
     environment:
-      POSTGRES_DB: db_00ud
+      POSTGRES_DB: dpg-d0stgcbuibrs73apmmb0-a
       POSTGRES_USER: db_00ud_user
       POSTGRES_PASSWORD: tL8Tuciz5JK0GVBXTDSCnkm9GTAyySs8
     volumes:
