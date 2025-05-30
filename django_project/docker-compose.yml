@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://semyon:WebsockChrist@db:5432/cat_base
+      DATABASE_URL: postgresql://db_00ud_user:tL8Tuciz5JK0GVBXTDSCnkm9GTAyySs8@dpg-d0stgcbuibrs73apmmb0-a/db_00ud
 
 volumes:
   postgres_data:
