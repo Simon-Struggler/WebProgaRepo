@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:17.5
     environment:
-      POSTGRES_DB: cat_base
-      POSTGRES_USER: semyon
-      POSTGRES_PASSWORD: WebsockChrist
+      POSTGRES_DB: db_00ud
+      POSTGRES_USER: db_00ud_user
+      POSTGRES_PASSWORD: tL8Tuciz5JK0GVBXTDSCnkm9GTAyySs8
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 

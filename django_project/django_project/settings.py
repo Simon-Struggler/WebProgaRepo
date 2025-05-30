@@ -66,9 +66,9 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cat_base',
-        'USER': 'semyon',
-        'PASSWORD': 'WebsockChrist',
+        'NAME': 'db_00ud',
+        'USER': 'db_00ud_user',
+        'PASSWORD': 'tL8Tuciz5JK0GVBXTDSCnkm9GTAyySs8',
         'HOST': 'db',  # Имя сервиса в docker-compose.yml
         'PORT': '5432',
     }
